@@ -3,6 +3,7 @@ package gui;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -28,8 +29,8 @@ public class GraphicUi extends JFrame implements ActionListener{
 	public GraphicUi() {
 		
 		try {
-			File titleImage = new File("Resources/SparkEstoFileTitle.png");
-			title = ImageIO.read(titleImage);
+			//File titleImage = new File("Resources/SparkEstoFileTitle.png");
+			title = Toolkit.getDefaultToolkit().getImage(getClass().getResource("Resources/SparkEstoFileTitle.png"));
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -59,7 +60,7 @@ public class GraphicUi extends JFrame implements ActionListener{
 		
 		b1.addActionListener(this);
 		
-		setSize(450,550);
+		setSize(450,600);
 		setVisible(true);
 	}
 	public static void main(String[] args) {
