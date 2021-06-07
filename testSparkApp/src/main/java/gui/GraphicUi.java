@@ -26,7 +26,10 @@ public class GraphicUi extends JFrame implements ActionListener{
 	public JButton b1 = new JButton("실행");
 	JTextArea query = new JTextArea(10,35);
 	Image title = null;
+	
 	public JProgressBar progress = new JProgressBar();
+	public int progressVal = 0;
+	
 	public JLabel resultText = new JLabel();
 	public boolean isRunning = false;
 	
@@ -83,11 +86,13 @@ public class GraphicUi extends JFrame implements ActionListener{
 			isRunning = true;
 			elasticJoin join = new elasticJoin(this);
 			
+			String data = host.getText() + "□" + query.getText();
+			
 	        final SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 	            @Override
 	            protected Void doInBackground() throws Exception {
-	            	join.runEsToFile(19850);
-	                progress.setValue(0);
+	            	join.runEsToFile(data);
+	                //progress.setValue(0);
 	                return null;
 	            }
 	        };
