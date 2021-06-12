@@ -22,6 +22,48 @@ public class elasticJoin {
 		this.gui = gui;
 	}
 	
+	public String getTableEle(String data, StringBuffer table) {
+		String result = "";
+		String nextData = "";
+		
+		if(data.contains("join")) {
+			table.append(data.substring(data.indexOf("join")+4, data.length()).trim() + ",");
+			nextData = data.substring(data.indexOf("join")+4, data.length()).trim();
+			return getTableEle(data,table);
+		} else {
+			table.append(data.substring(0, data.indexOf(" ")).trim() + ",");
+			result = table.toString();
+			return result;
+		}		
+	}
+	
+	public String getTableList(String data) {
+		String result = "";
+		String tableNameEle = "";
+		
+		if(data.contains("where")) {
+			tableNameEle = data.substring(data.indexOf("from")+4, data.lastIndexOf("where")).trim();
+		} else if(data.contains("group by")) {
+			tableNameEle = data.substring(data.indexOf("from")+4, data.lastIndexOf("group")).trim();
+		} else if(data.contains("order by")) {
+			tableNameEle = data.substring(data.indexOf("from")+4, data.lastIndexOf("order")).trim();
+		} else {
+			tableNameEle = data.substring(data.indexOf("from")+4, data.length()).trim();
+		}
+		
+		if(tableNameEle.startsWith("(")) {
+			tableNameEle = tableNameEle.substring(tableNameEle.indexOf("(")+1, tableNameEle.length()).trim();
+		}
+		result = tableNameEle.trim();
+		
+		if(tableNameEle.startsWith("select")) {
+			return getTableList(result);
+		} else {
+			return result;
+		}
+	}
+	
+	
 	public void runEsToFile(String data) {
 		
 		String host = data.substring(0, data.indexOf("□")).trim();
@@ -67,6 +109,12 @@ public class elasticJoin {
 		
 		SQLContext sqc = new SQLContext(sc);
 
+		query = query.toLowerCase();
+		query = Util.replace(query, "\n", " ");
+		query = Util.replace(query, "\r", " ");
+		query = Util.replace(query, "\t", " ");
+		
+		
 		Dataset<Row> people = JavaEsSparkSQL.esDF(sqc, "test"); 
 		people.createOrReplaceTempView("test");
 	
@@ -78,6 +126,7 @@ public class elasticJoin {
 
 		jarr.forEach(val -> {
 			try {
+				
 				if(jarr.size() > 100) {
 					count++;
 					if(count >= jarr.size() / 100) {

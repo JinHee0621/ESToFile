@@ -7,9 +7,11 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
@@ -20,17 +22,44 @@ import javax.swing.SwingWorker;
 
 import testSparkApp.elasticJoin;
 
+class ChoosePath extends JFrame{
+	public GraphicUi guiFrame;
+	public JFileChooser chooser = new JFileChooser();
+	
+	public ChoosePath(GraphicUi guiFrame) {
+		this.guiFrame = guiFrame;
+		
+		chooser.setCurrentDirectory(new File("C:\\"));
+		chooser.setFileSelectionMode(chooser.DIRECTORIES_ONLY);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		int re = chooser.showSaveDialog(null);
+		if(re == JFileChooser.APPROVE_OPTION) {
+			guiFrame.filePath = chooser.getSelectedFile().getAbsolutePath();
+			guiFrame.fileAddress.setText(guiFrame.filePath);
+		}
+		
+	}
+	
+}
+
+
 public class GraphicUi extends JFrame implements ActionListener{
+	public String filePath = "";
+	public JLabel fileAddress = new JLabel("C:\\");
 	
 	JTextField host = new JTextField(35);
 	public JButton b1 = new JButton("실행");
+	public JButton b2 = new JButton("경로");
+	
+	
 	JTextArea query = new JTextArea(10,35);
 	Image title = null;
 	
 	public JProgressBar progress = new JProgressBar();
 	public int progressVal = 0;
 	
-	public JLabel resultText = new JLabel();
+	public JLabel resultText = new JLabel("             ");
 	public boolean isRunning = false;
 	
 	public GraphicUi() {
@@ -47,7 +76,7 @@ public class GraphicUi extends JFrame implements ActionListener{
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		setLayout(new FlowLayout(FlowLayout.CENTER, 180, 20));
+		setLayout(new FlowLayout(FlowLayout.CENTER, 140, 20));
 		Container thisCon = getContentPane();
 		
 /*	    // 프레임(자바 화면) 크기
@@ -67,11 +96,17 @@ public class GraphicUi extends JFrame implements ActionListener{
 		thisCon.add(host);
 		thisCon.add(new JLabel("Query"));
 		thisCon.add(new JScrollPane(query));
+		thisCon.add(b2);
+		b2.addActionListener(this);
+		
 		thisCon.add(b1);
 		b1.addActionListener(this);
+
 		
+		thisCon.add(fileAddress);
 		thisCon.add(progress);
 		thisCon.add(resultText);
+
 		
 		setSize(450,700);
 		setVisible(true);
@@ -82,22 +117,28 @@ public class GraphicUi extends JFrame implements ActionListener{
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(!isRunning) {
-			isRunning = true;
-			elasticJoin join = new elasticJoin(this);
-			
-			String data = host.getText() + "□" + query.getText();
-			
-	        final SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-	            @Override
-	            protected Void doInBackground() throws Exception {
-	            	join.runEsToFile(data);
-	                //progress.setValue(0);
-	                return null;
-	            }
-	        };
-	        worker.execute();
+		if(e.getSource() == b1) {
+			if(!isRunning) {
+				isRunning = true;
+				elasticJoin join = new elasticJoin(this);
+				
+				String data = host.getText() + "□" + query.getText();
+				
+		        final SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+		            @Override
+		            protected Void doInBackground() throws Exception {
+		            	join.runEsToFile(data);
+		                //progress.setValue(0);
+		                return null;
+		            }
+		        };
+		        worker.execute();
+			}
+		} else if(e.getSource() == b2) {
+
+			new ChoosePath(this);
 		}
+	
 	}
 
 }
