@@ -43,6 +43,50 @@ class ChoosePath extends JFrame{
 	
 }
 
+class AlertCon extends JFrame implements ActionListener{
+	public GraphicUi mainFrame;
+	
+	JTextArea alertContent = new JTextArea(5,8);
+	public JButton btn = new JButton("확인");
+	
+	Container subCon;
+	
+	Image icon = null;
+	
+	
+	public AlertCon(String content) {
+		try {
+			icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("Resources/warning.png"));
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		icon = icon.getScaledInstance(45, 45, Image.SCALE_SMOOTH);
+		
+		alertContent.setBackground(null);
+		alertContent.setEditable(false);
+		
+		setSize(375, 250);
+		subCon = getContentPane();
+		subCon.setLayout(new FlowLayout(FlowLayout.CENTER, 130, 10));
+		alertContent.setText(content);
+		btn.addActionListener(this);
+		subCon.add(new JLabel(new ImageIcon(icon)));
+		subCon.add(alertContent);
+		subCon.add(btn);
+		
+		setResizable(false);
+		setVisible(true);
+		setLocationRelativeTo(null);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		dispose();
+	}
+}
+
 
 public class GraphicUi extends JFrame implements ActionListener{
 	public String filePath = "";
@@ -135,10 +179,13 @@ public class GraphicUi extends JFrame implements ActionListener{
 		        worker.execute();
 			}
 		} else if(e.getSource() == b2) {
-
 			new ChoosePath(this);
 		}
 	
+	}
+	
+	public void callAlert(String content) {
+		new AlertCon(content);
 	}
 
 }
