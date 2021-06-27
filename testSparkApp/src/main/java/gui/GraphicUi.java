@@ -171,7 +171,7 @@ public class GraphicUi extends JFrame implements ActionListener{
 		        final SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 		            @Override
 		            protected Void doInBackground() throws Exception {
-		            	join.runEsToFile(data);
+		            	join.runEsToFile(data, 60000);
 		                //progress.setValue(0);
 		                return null;
 		            }
